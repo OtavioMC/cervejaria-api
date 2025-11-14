@@ -1,0 +1,6 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /cervejaria-api/public/
+    
+    // ...existing code...
+</IfModule>

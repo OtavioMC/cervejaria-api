@@ -1,0 +1,45 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: cervejaria-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cervejaria_db
+      MYSQL_USER: cervejaria
+      MYSQL_PASSWORD: cervejaria123
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    networks:
+      - cervejaria-network
+
+  app:
+    build: .
+    container_name: cervejaria-app
+    restart: on-failure
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/cervejaria_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: cervejaria
+      SPRING_DATASOURCE_PASSWORD: cervejaria123
+    ports:
+      - "8080:8080"
+    networks:
+      - cervejaria-network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  cervejaria-network:
+    driver: bridge

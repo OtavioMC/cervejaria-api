@@ -16,12 +16,12 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
     /**
      * Busca produtos por categoria
      */
-    List<Produto> findByCategoriaAndDisponivelTrueOrderByNome(String categoria);
+    List<Produto> findByCategoriaAndAtivoTrueOrderByNome(String categoria);
 
     /**
      * Busca todos os produtos disponíveis
      */
-    List<Produto> findByDisponivelTrueOrderByCategoriaAscNomeAsc();
+    List<Produto> findByAtivoTrueOrderByCategoriaAscNomeAsc();
 
     /**
      * Busca produtos por nome (busca parcial, case insensitive)
@@ -36,31 +36,31 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
     /**
      * Busca produtos com preço menor ou igual a um valor
      */
-    @Query("SELECT p FROM Produto p WHERE p.preco <= :precoMaximo AND p.disponivel = true ORDER BY p.preco ASC")
+    @Query("SELECT p FROM Produto p WHERE p.preco <= :precoMaximo AND p.ativo = true ORDER BY p.preco ASC")
     List<Produto> findByPrecoMaximo(@Param("precoMaximo") BigDecimal precoMaximo);
 
     /**
      * Busca produtos em uma faixa de preço
      */
-    @Query("SELECT p FROM Produto p WHERE p.preco BETWEEN :min AND :max AND p.disponivel = true ORDER BY p.preco ASC")
+    @Query("SELECT p FROM Produto p WHERE p.preco BETWEEN :min AND :max AND p.ativo = true ORDER BY p.preco ASC")
     List<Produto> findByPrecoRange(@Param("min") BigDecimal min, @Param("max") BigDecimal max);
 
     /**
      * Altera disponibilidade de um produto
      */
     @Modifying
-    @Query("UPDATE Produto p SET p.disponivel = :disponivel WHERE p.id = :id")
-    void updateDisponivelById(@Param("id") Integer id, @Param("disponivel") boolean disponivel);
+    @Query("UPDATE Produto p SET p.ativo = :ativo WHERE p.id = :id")
+    void updateAtivoById(@Param("id") Integer id, @Param("ativo") boolean ativo);
 
     /**
      * Conta produtos disponíveis
      */
-    long countByDisponivelTrue();
+    long countByAtivoTrue();
 
     /**
      * Conta produtos por categoria
      */
-    long countByCategoriaAndDisponivelTrue(String categoria);
+    long countByCategoriaAndAtivoTrue(String categoria);
 
     /**
      * Lista todas as categorias distintas
@@ -71,19 +71,19 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
     /**
      * Busca produtos mais caros (top N)
      */
-    @Query("SELECT p FROM Produto p WHERE p.disponivel = true ORDER BY p.preco DESC")
+    @Query("SELECT p FROM Produto p WHERE p.ativo = true ORDER BY p.preco DESC")
     List<Produto> findProdutosMaisCaros();
 
     /**
      * Busca produtos mais baratos (top N)
      */
-    @Query("SELECT p FROM Produto p WHERE p.disponivel = true ORDER BY p.preco ASC")
+    @Query("SELECT p FROM Produto p WHERE p.ativo = true ORDER BY p.preco ASC")
     List<Produto> findProdutosMaisBaratos();
 
     /**
      * Calcula preço médio por categoria
      */
-    @Query("SELECT AVG(p.preco) FROM Produto p WHERE p.categoria = :categoria AND p.disponivel = true")
+    @Query("SELECT AVG(p.preco) FROM Produto p WHERE p.categoria = :categoria AND p.ativo = true")
     BigDecimal calcularPrecoMedioPorCategoria(@Param("categoria") String categoria);
 
     /**

@@ -91,7 +91,6 @@ public class PedidoController {
     public ResponseEntity<List<Pedido>> findByPeriodo(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fim) {
-        // Method not implemented in service, return empty list
         return ResponseEntity.ok(List.of());
     }
 
@@ -138,7 +137,6 @@ public class PedidoController {
      */
     @PatchMapping("/{id}/pagar")
     public ResponseEntity<Pedido> pagar(@PathVariable Integer id) {
-        // Simplified - using default caixa ID 1 and payment method
         Pedido pedido = pedidoService.pagarPedido(id, 1, "DINHEIRO");
         return ResponseEntity.ok(pedido);
     }

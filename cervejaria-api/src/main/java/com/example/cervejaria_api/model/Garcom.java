@@ -1,39 +1,61 @@
 package com.example.cervejaria_api.model;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "garcons")
-public class Garcom extends Pessoa {
+public class Garcom extends Entidade {
 
-    @Column(nullable = false, unique = true, length = 20)
-    private String matricula;
+    @Column(nullable = false, length = 100)
+    @NotBlank(message = "Nome do garçom é obrigatório")
+    private String nome;
 
-    @Column(precision = 10, scale = 2)
-    private BigDecimal salario;
+    @Column(unique = true, length = 11)
+    private String cpf;
+
+    @Column(length = 15)
+    private String telefone;
+
+    @Column(length = 100)
+    @Email(message = "Email inválido")
+    private String email;
 
     @Column(nullable = false)
     private Boolean ativo = true;
 
-    @Column(length = 20)
-    private String turno;
-
     // Getters e Setters
-    public String getMatricula() {
-        return matricula;
+    public String getNome() {
+        return nome;
     }
 
-    public void setMatricula(String matricula) {
-        this.matricula = matricula;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public BigDecimal getSalario() {
-        return salario;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setSalario(BigDecimal salario) {
-        this.salario = salario;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Boolean getAtivo() {
@@ -42,13 +64,5 @@ public class Garcom extends Pessoa {
 
     public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
-    }
-
-    public String getTurno() {
-        return turno;
-    }
-
-    public void setTurno(String turno) {
-        this.turno = turno;
     }
 }

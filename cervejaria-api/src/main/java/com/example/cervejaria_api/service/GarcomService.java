@@ -178,4 +178,133 @@ public class GarcomService {
             throw new RuntimeException("Salário não pode ser negativo");
         }
     }
+
+    /**
+     * Busca todos os garçons
+     */
+    public List<Garcom> findAll() {
+        return garcomRepository.findAll();
+    }
+
+    /**
+     * Busca garçons ativos
+     */
+    public List<Garcom> findAtivos() {
+        return garcomRepository.findByAtivoTrue();
+    }
+
+    /**
+     * Busca garçom por ID
+     */
+    public Garcom findById(Integer id) {
+        return garcomRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Garçom não encontrado com ID: " + id));
+    }
+
+    /**
+     * Busca garçom por CPF
+     */
+    public Optional<Garcom> findByCpf(String cpf) {
+        return garcomRepository.findByCpf(cpf);
+    }
+
+    /**
+     * Busca garçom por email
+     */
+    public Optional<Garcom> findByEmail(String email) {
+        return garcomRepository.findByEmail(email);
+    }
+
+    /**
+     * Busca garçons por nome
+     */
+    public List<Garcom> findByNome(String nome) {
+        return garcomRepository.findByNomeContaining(nome);
+    }
+
+    /**
+     * Cria novo garçom
+     */
+    @Transactional
+    public Garcom create(Garcom garcom) {
+        if (garcom.getNome() == null || garcom.getNome().trim().isEmpty()) {
+            throw new RuntimeException("Nome do garçom é obrigatório");
+        }
+
+        // Valida CPF único
+        if (garcom.getCpf() != null && !garcom.getCpf().isEmpty()) {
+            Optional<Garcom> garcomExistente = garcomRepository.findByCpf(garcom.getCpf());
+            if (garcomExistente.isPresent()) {
+                throw new RuntimeException("CPF já cadastrado");
+            }
+        }
+
+        // Valida Email único
+        if (garcom.getEmail() != null && !garcom.getEmail().isEmpty()) {
+            Optional<Garcom> garcomExistente = garcomRepository.findByEmail(garcom.getEmail());
+            if (garcomExistente.isPresent()) {
+                throw new RuntimeException("Email já cadastrado");
+            }
+        }
+
+        if (garcom.getAtivo() == null) {
+            garcom.setAtivo(true);
+        }
+
+        return garcomRepository.save(garcom);
+    }
+
+    /**
+     * Atualiza garçom
+     */
+    @Transactional
+    public Garcom update(Integer id, Garcom garcomAtualizado) {
+        Garcom garcomExistente = findById(id);
+
+        if (garcomAtualizado.getNome() != null) {
+            garcomExistente.setNome(garcomAtualizado.getNome());
+        }
+        if (garcomAtualizado.getCpf() != null) {
+            // Valida CPF único (exceto o próprio)
+            Optional<Garcom> outro = garcomRepository.findByCpf(garcomAtualizado.getCpf());
+            if (outro.isPresent() && !outro.get().getId().equals(id)) {
+                throw new RuntimeException("CPF já cadastrado");
+            }
+            garcomExistente.setCpf(garcomAtualizado.getCpf());
+        }
+        if (garcomAtualizado.getTelefone() != null) {
+            garcomExistente.setTelefone(garcomAtualizado.getTelefone());
+        }
+        if (garcomAtualizado.getEmail() != null) {
+            // Valida Email único (exceto o próprio)
+            Optional<Garcom> outro = garcomRepository.findByEmail(garcomAtualizado.getEmail());
+            if (outro.isPresent() && !outro.get().getId().equals(id)) {
+                throw new RuntimeException("Email já cadastrado");
+            }
+            garcomExistente.setEmail(garcomAtualizado.getEmail());
+        }
+        if (garcomAtualizado.getAtivo() != null) {
+            garcomExistente.setAtivo(garcomAtualizado.getAtivo());
+        }
+
+        return garcomRepository.save(garcomExistente);
+    }
+
+    /**
+     * Deleta garçom (soft delete)
+     */
+    @Transactional
+    public void delete(Integer id) {
+        Garcom garcom = findById(id);
+        garcom.setAtivo(false);
+        garcomRepository.save(garcom);
+    }
+
+    /**
+     * Deleta garçom permanentemente
+     */
+    @Transactional
+    public void deletePermanente(Integer id) {
+        garcomRepository.deleteById(id);
+    }
 }

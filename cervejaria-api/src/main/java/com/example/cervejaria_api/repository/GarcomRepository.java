@@ -76,4 +76,25 @@ public interface GarcomRepository extends JpaRepository<Garcom, Integer> {
      * Lista todos os garçons ordenados por nome
      */
     List<Garcom> findAllByOrderByNome();
+
+    /**
+     * Busca garçons ativos
+     */
+    List<Garcom> findByAtivoTrue();
+
+    /**
+     * Busca garçom por CPF
+     */
+    Optional<Garcom> findByCpf(String cpf);
+
+    /**
+     * Busca garçom por email
+     */
+    Optional<Garcom> findByEmail(String email);
+
+    /**
+     * Busca garçons por nome (contém)
+     */
+    @Query("SELECT g FROM Garcom g WHERE LOWER(g.nome) LIKE LOWER(CONCAT('%', :nome, '%'))")
+    List<Garcom> findByNomeContaining(@Param("nome") String nome);
 }

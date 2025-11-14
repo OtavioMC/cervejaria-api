@@ -1,6 +1,5 @@
 package com.example.cervejaria_api.repository;
 
-
 import com.example.cervejaria_api.model.Produto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -91,4 +90,32 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
      * Lista todos os produtos ordenados por nome
      */
     List<Produto> findAllByOrderByNome();
+
+    /**
+     * Busca produtos ativos
+     */
+    List<Produto> findByAtivoTrue();
+
+    /**
+     * Busca produtos ativos por categoria
+     */
+    List<Produto> findByCategoriaAndAtivoTrue(String categoria);
+
+    /**
+     * Busca produtos por nome (contém)
+     */
+    @Query("SELECT p FROM Produto p WHERE LOWER(p.nome) LIKE LOWER(CONCAT('%', :nome, '%'))")
+    List<Produto> findByNomeContaining(@Param("nome") String nome);
+
+    /**
+     * Busca produtos com estoque baixo
+     */
+    @Query("SELECT p FROM Produto p WHERE p.estoque <= :quantidade AND p.ativo = true")
+    List<Produto> findByEstoqueBaixo(@Param("quantidade") Integer quantidade);
+
+    /**
+     * Busca categorias distintas
+     */
+    @Query("SELECT DISTINCT p.categoria FROM Produto p ORDER BY p.categoria")
+    List<String> findAllCategorias();
 }

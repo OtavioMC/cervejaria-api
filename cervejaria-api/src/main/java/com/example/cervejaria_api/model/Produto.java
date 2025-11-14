@@ -1,6 +1,9 @@
 package com.example.cervejaria_api.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 @Entity
@@ -8,22 +11,30 @@ import java.math.BigDecimal;
 public class Produto extends Entidade {
 
     @Column(nullable = false, length = 100)
+    @NotBlank(message = "Nome do produto é obrigatório")
     private String nome;
 
     @Column(columnDefinition = "TEXT")
     private String descricao;
 
     @Column(nullable = false, precision = 10, scale = 2)
+    @NotNull(message = "Preço é obrigatório")
+    @Positive(message = "Preço deve ser positivo")
     private BigDecimal preco;
 
     @Column(nullable = false, length = 50)
+    @NotBlank(message = "Categoria é obrigatória")
     private String categoria;
 
     @Column(nullable = false)
-    private Boolean disponivel = true;
+    @NotNull(message = "Estoque é obrigatório")
+    private Integer estoque = 0;
 
-    @Column(name = "imagem_url", length = 500)
-    private String imagemUrl;
+    @Column(nullable = false)
+    private Boolean ativo = true;
+
+    @Column(length = 255)
+    private String imagem;
 
     // Getters e Setters
     public String getNome() {
@@ -58,19 +69,27 @@ public class Produto extends Entidade {
         this.categoria = categoria;
     }
 
-    public Boolean getDisponivel() {
-        return disponivel;
+    public Integer getEstoque() {
+        return estoque;
     }
 
-    public void setDisponivel(Boolean disponivel) {
-        this.disponivel = disponivel;
+    public void setEstoque(Integer estoque) {
+        this.estoque = estoque;
     }
 
-    public String getImagemUrl() {
-        return imagemUrl;
+    public Boolean getAtivo() {
+        return ativo;
     }
 
-    public void setImagemUrl(String imagemUrl) {
-        this.imagemUrl = imagemUrl;
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public String getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(String imagem) {
+        this.imagem = imagem;
     }
 }

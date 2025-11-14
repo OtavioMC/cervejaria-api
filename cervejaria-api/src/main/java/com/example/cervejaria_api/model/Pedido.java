@@ -1,6 +1,8 @@
 package com.example.cervejaria_api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -8,16 +10,18 @@ import java.util.List;
 
 @Entity
 @Table(name = "pedidos")
-public class Pedido extends Entidade {
-
-    @Column(name = "numero_mesa", nullable = false)
+public class Pedido extends Entidade {    @Column(name = "numero_mesa", nullable = false)
+    @NotNull(message = "Número da mesa é obrigatório")
     private Integer numeroMesa;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "garcom_id", nullable = false)
+    @NotNull(message = "Garçom é obrigatório")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Garcom garcom;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"pedido", "hibernateLazyInitializer", "handler"})
     private List<ItemPedido> itens = new ArrayList<>();
 
     @Column(name = "valor_total", nullable = false, precision = 10, scale = 2)

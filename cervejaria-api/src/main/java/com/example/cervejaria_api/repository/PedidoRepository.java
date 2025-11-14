@@ -16,6 +16,50 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
     /**
      * Busca pedidos por status
      */
+    List<Pedido> findByStatus(String status);
+
+    /**
+     * Busca pedidos por número da mesa
+     */
+    List<Pedido> findByNumeroMesa(Integer numeroMesa);
+
+    /**
+     * Busca pedidos abertos de uma mesa
+     */
+    List<Pedido> findByNumeroMesaAndStatus(Integer numeroMesa, String status);
+
+    /**
+     * Busca pedidos por garçom
+     */
+    @Query("SELECT p FROM Pedido p WHERE p.garcom.id = :garcomId")
+    List<Pedido> findByGarcomId(@Param("garcomId") Integer garcomId);
+
+    /**
+     * Busca pedidos por garçom e status
+     */
+    @Query("SELECT p FROM Pedido p WHERE p.garcom.id = :garcomId AND p.status = :status")
+    List<Pedido> findByGarcomIdAndStatus(@Param("garcomId") Integer garcomId, @Param("status") String status);
+
+    /**
+     * Busca pedidos por período
+     */
+    @Query("SELECT p FROM Pedido p WHERE p.dataHoraPedido BETWEEN :inicio AND :fim")
+    List<Pedido> findByPeriodo(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim);
+
+    /**
+     * Busca pedidos com itens (otimizado)
+     */
+    @Query("SELECT DISTINCT p FROM Pedido p LEFT JOIN FETCH p.itens WHERE p.id = :id")
+    Pedido findByIdWithItens(@Param("id") Integer id);
+
+    /**
+     * Conta pedidos por status
+     */
+    Long countByStatus(String status);
+
+    /**
+     * Busca pedidos por status
+     */
     List<Pedido> findByStatusOrderByDataHoraPedidoDesc(String status);
 
     /**
@@ -27,12 +71,6 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
      * Busca todos os pedidos abertos
      */
     List<Pedido> findByStatusOrderByDataHoraPedidoAsc(String status);
-
-    /**
-     * Busca pedidos por garçom
-     */
-    @Query("SELECT p FROM Pedido p WHERE p.garcom.id = :garcomId ORDER BY p.dataHoraPedido DESC")
-    List<Pedido> findByGarcomId(@Param("garcomId") Integer garcomId);
 
     /**
      * Busca pedidos de um garçom em um período
@@ -53,11 +91,6 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
      */
     @Query("SELECT p FROM Pedido p WHERE p.valorTotal >= :valorMinimo ORDER BY p.valorTotal DESC")
     List<Pedido> findByValorTotalMinimo(@Param("valorMinimo") BigDecimal valorMinimo);
-
-    /**
-     * Conta pedidos por status
-     */
-    long countByStatus(String status);
 
     /**
      * Conta pedidos de uma mesa

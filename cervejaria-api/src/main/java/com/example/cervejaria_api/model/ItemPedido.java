@@ -13,16 +13,21 @@ public class ItemPedido {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pedido_id", nullable = false)
+    @NotNull(message = "Pedido é obrigatório")
+    @JsonIgnoreProperties({"itens", "hibernateLazyInitializer", "handler"})
     private Pedido pedido;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "produto_id", nullable = false)
+    @NotNull(message = "Produto é obrigatório")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Produto produto;
 
     @Column(nullable = false)
-    private Integer quantidade;
-
-    @Column(name = "preco_unitario", nullable = false, precision = 10, scale = 2)
+    @NotNull(message = "Quantidade é obrigatória")
+    @Min(value = 1, message = "Quantidade deve ser no mínimo 1")
+    private Integer quantidade;    @Column(name = "preco_unitario", nullable = false, precision = 10, scale = 2)
+    @NotNull(message = "Preço unitário é obrigatório")
     private BigDecimal precoUnitario;
 
     @Column(nullable = false, precision = 10, scale = 2)
